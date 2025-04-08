@@ -15,8 +15,8 @@ class Agent:
 
     def can_move(self, x, y):
         """Vérifie si (x,y) est dans la grille et n'est pas la case 'mur'."""
-        if 0 <= self.x < self.gridworld.GRID_WIDTH and 0 <= self.y < self.gridworld.GRID_HEIGHT:
-            return (self.x, self.y) != self.gridworld.wall_pos
+        if 0 <= x < self.gridworld.GRID_WIDTH and 0 <= y < self.gridworld.GRID_HEIGHT:
+            return (x, y) != self.gridworld.wall_pos
         return False
         
 
@@ -40,4 +40,5 @@ class Agent:
 
         if self.can_move(new_x, new_y):
             st.session_state.agent_pos = (new_x, new_y)
-        self.gridworld.dessiner_grille(self.placeholder, (self.x, self.y))
+       
+            self.gridworld.dessiner_grille(self.placeholder, st.session_state.agent_pos)
