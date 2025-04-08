@@ -16,7 +16,7 @@ class GridWorld:
         # On peut initialiser tout à zéro, ou de manière aléatoire
         if "Q" not in st.session_state:
             # Q[x][y] = [q_up, q_down, q_left, q_right]
-            st.session_state.Q = [[[0.0, 0.0, 0.0, 0.0] for _ in range(self.GRID_HEIGHT)]for _ in range(self.GRID_WIDTH)]
+            st.session_state.Q = [[[-1.0, -1.0, -1.0, -1.0] for _ in range(self.GRID_HEIGHT)]for _ in range(self.GRID_WIDTH)]
         
         # Positions spéciales :
         self.goal_pos = (3, 2)    # But (vert)
@@ -25,7 +25,7 @@ class GridWorld:
 
         st.session_state.R = [[0.0 for _ in range(self.GRID_HEIGHT)]for _ in range(self.GRID_WIDTH)]
         st.session_state.R[self.goal_pos[0]][self.goal_pos[1]] = 1
-        st.session_state.R[self.danger_pos[0]][self.danger_pos[1]] = 1
+        st.session_state.R[self.danger_pos[0]][self.danger_pos[1]] = -1
 
 
 
@@ -138,4 +138,4 @@ class GridWorld:
         draw.ellipse([ax1+padding, ay1+padding, ax2-padding, ay2-padding],
                     fill="blue", outline="black", width=3)
 
-        placeholder.image(img, caption=f"Position de l'agent : {str(st.session_state.agent_pos)}")
+        placeholder.image(img, caption=f"Position de l'agent : {str(st.session_state.agent_pos)} ; Reward : {str(st.session_state.R[agent_x][agent_y])}")

@@ -42,3 +42,5 @@ class Agent:
             st.session_state.agent_pos = (new_x, new_y)
        
             self.gridworld.dessiner_grille(self.placeholder, st.session_state.agent_pos)
+            return True
+        return False
