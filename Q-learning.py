@@ -5,10 +5,11 @@ import numpy as np
 import pandas as pd
 import random
 import time
+from tensorflow.keras.models import load_model
 
 # --- Interface Streamlit ---
 st.set_page_config(layout="centered")
-st.title("Q-Learning - Agent in GridWorld")
+st.sidebar.subheader("Q-Learning - Agent in GridWorld")
 
 col1, col2, col3 = st.columns(3)
 
@@ -19,6 +20,8 @@ placeholder = st.empty()
 with col1 : alpha = st.slider("Learning rate", 0.0, 1.0, 0.50)
 with col2 : gama = st.slider("gama", 0.0, 1.0, 0.20)
 with col3 : epsilon = st.slider("epsilon", 0.0, 1.0, 0.4)
+q_default = st.sidebar.number_input("Default Q-value", -10, 10, 0)
+r_default = st.sidebar.number_input("Default R-value", -10, 10, 1)
 
 if st.sidebar.checkbox("Set up grid size"):
 
@@ -37,11 +40,11 @@ if st.sidebar.checkbox("Set up grid size"):
     gw = GridWorld(width=width, height=height, 
                    goal_pos=(goal_pos_x, goal_pos_y),
                    danger_pos=(danger_pos_x, danger_pos_y),
-                     wall_pos=(wall_pos_x, wall_pos_y))
+                     wall_pos=(wall_pos_x, wall_pos_y), q_default=q_default, r_default=r_default)
     agent = Agent(0, 0, gw, placeholder)
 else:
     # Initialisation de la grille par défaut
-    gw = GridWorld()
+    gw = GridWorld(q_default=q_default, r_default=r_default)
     agent = Agent(0, 0, gw, placeholder)
     # Initialisation de la position de l'agent
 
@@ -63,12 +66,13 @@ if st.sidebar.button("Reset Position"): gw.reset_position(placeholder)
 # Bouton Reset all value
 if st.sidebar.button("Reset all values"):
     del st.session_state.Q, gw, agent, st.session_state.agent_pos
-    gw = GridWorld()
+    gw = GridWorld(q_default=q_default)
     agent = Agent(0, 0, gw, placeholder)
 
 
 sleep_time = st.sidebar.slider("Speed step in second", 0.0, 2.0, 0.5)
-n_episodes = st.sidebar.slider("N episode", 0, 20, 10)
+n_episodes = st.sidebar.slider("N episode", 0, 30, 20)
+n_steps = st.sidebar.slider("N steps", 0, 100, 30)
 dict_actions = {
                 0:'up', 
                 1:'down', 
@@ -109,6 +113,9 @@ if st.sidebar.button("Code movement"):
 
 
 if st.sidebar.button("Entraîner Deep Q-Learning"):
-    model = build_model(input_dim=2, output_dim=4)
-    model = train_dqn(model, gw, agent, placeholder, epsilon, gama,alpha, episodes=10)
-    model.save("dqn_model.h5")
+    try:
+        model = load_model("dqn_model.keras")
+    except:
+        model = build_model(input_dim=2, output_dim=4)
+    model = train_dqn(model, gw, agent, placeholder, epsilon, gama,alpha, episodes=n_episodes, n_steps=n_steps, sleep_time=sleep_time)
+    model.save("dqn_model.keras")

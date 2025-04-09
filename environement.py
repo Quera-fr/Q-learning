@@ -5,7 +5,7 @@ import time
 
 
 class GridWorld:
-    def __init__(self, width=4, height=3, cell_width=120, cell_height=120, goal_pos=(3, 2), danger_pos=(3, 1), wall_pos=(1, 1)):
+    def __init__(self, width=4, height=3, cell_width=120, cell_height=120, goal_pos=(3, 2), danger_pos=(3, 1), wall_pos=(1, 1), q_default=0, r_default=1):
         # --- Paramètres de la grille ---
         self.GRID_WIDTH = width
         self.GRID_HEIGHT = height
@@ -16,7 +16,7 @@ class GridWorld:
         # On peut initialiser tout à zéro, ou de manière aléatoire
         if "Q" not in st.session_state:
             # Q[x][y] = [q_up, q_down, q_left, q_right]
-            st.session_state.Q = [[[0, 0, 0, 0] for _ in range(self.GRID_HEIGHT)]for _ in range(self.GRID_WIDTH)]
+            st.session_state.Q = [[[q_default, q_default, q_default, q_default] for _ in range(self.GRID_HEIGHT)]for _ in range(self.GRID_WIDTH)]
         
         # Positions spéciales :
         self.goal_pos = goal_pos    # But (vert)
@@ -24,8 +24,8 @@ class GridWorld:
         self.wall_pos = wall_pos    # Mur (gris)
 
         st.session_state.R = [[0.0 for _ in range(self.GRID_HEIGHT)]for _ in range(self.GRID_WIDTH)]
-        st.session_state.R[self.goal_pos[0]][self.goal_pos[1]] = 10
-        st.session_state.R[self.danger_pos[0]][self.danger_pos[1]] = -10
+        st.session_state.R[self.goal_pos[0]][self.goal_pos[1]] = r_default
+        st.session_state.R[self.danger_pos[0]][self.danger_pos[1]] = -r_default
 
 
 
